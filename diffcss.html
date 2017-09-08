@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>PhantomCSS Demo</title>
+		<style>
+			body {
+				padding:80px;
+			}
+			.mug {
+				font-size: 180px;
+				color: #666;
+			}
+		</style>
+	</head>
+	<body>
+
+	<div id="coffee-machine-wrapper">
+		<p>Would you like a coffee?</p>
+
+		<a href="#myModal" role="button" class="btn btn-primary btn-large" id="coffee-machine-button" data-toggle="modal">Go to the Coffee Machine</a>
+
+		<!-- Modal -->
+		<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3 id="myModalLabel">The Coffee Machine</h3>
+			</div>
+			<div class="modal-body">
+				<p class="text-center"><i class="icon-coffee mug"></i></p>
+
+				<div class="text-center alert alert-success fade in" id="latte-success" >
+					Here is your <strong>Latte!</strong>. Hmm, tasty!
+		        </div>
+
+		        <div class="text-center alert alert-success fade in" id="cappuccino-success" >
+					A frothy <strong>Cappuccino!</strong> luverly!
+		        </div>
+
+		        <div class="text-center alert fade in" id="espresso-option" >
+					<p><strong>Espresso!</strong> Wanna make that a double?</p>
+					<p><a class="btn" href="#" id="make-that-a-double">Yup, hit me</a> <a class="btn" href="#" id="single-is-fine">Oh no no no</a></p>
+		        </div>
+
+		        <div class="text-center alert alert-success fade in" id="single-espresso-success" >
+					Merry <strong>Espresso</strong> drinking.
+		        </div>
+
+				<div class="text-center alert alert-success fade in" id="double-espresso-success" >
+					<strong>Double Espresso!</strong>, That'll keep yer going.
+		        </div>
+
+				<div id="screen-one">
+					<br/>
+					<p class="text-center">What would you like?</p>
+
+					<p class="text-center">
+						<button class="btn btn-large btn-primary" id="cappuccino-button" type="button">Cappuccino</button>
+						<button class="btn btn-large btn-primary" id="espresso-button" type="button">Espresso</button>
+					</p>
+				</div>
+
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" id="close">Close</button>
+			</div>
+		</div>
+	</div>
+
+	</body>
+</html>
