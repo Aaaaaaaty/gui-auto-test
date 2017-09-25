@@ -6,21 +6,24 @@ const casper = require('casper').create({
         height: 4080
     }
 })
-const url = decodeURIComponent(system.args[4])
-const selector = decodeURIComponent(system.args[5])
+const fileName = decodeURIComponent(system.args[4])
+const url = decodeURIComponent(system.args[5])
+const selector = decodeURIComponent(system.args[6])
 casper.start(url)
 casper.then(function() {
-    // this.click('.m1 .solgan')
     this.wait(3000, function() {
     	console.log('正在截图请稍后')
-        this.captureSelector('./images/captureTest2.png', selector)
-        casper.start('http://10.2.44.66:3033/form.html', function() {
-		    this.fill('form#contact-form', {
-		        'diff':    'I am watching you',
-		        'point':    'So be careful.',
-		    }, true)
-		})
+        this.captureSelector('./images/captureTest3.png', selector)
     })
+})
+casper.then(function() {
+	casper.start('http://10.2.44.66:3033/form.html', function() {
+		console.log('填写表单')
+		this.fill('form#contact-form', {
+		    'diff': './images/captureTest3.png',
+		    'point': './images/fileName',
+		}, true)
+	})
 })
 casper.run()
 

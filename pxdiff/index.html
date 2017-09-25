@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>像素对比工具</title>
+	<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<style>
+		.wrapper {
+			width: 800px;
+			margin: 0 auto;
+		}
+		#diffImg {
+			width: 400px;
+			margin: 0 auto;
+		}
+		
+
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<form id="form">
+			<div class="diff">
+				<div class="form-group">
+					<label for="exampleInputFile">对比文件</label>
+					<input type="file" id="exampleInputFile" name="file">
+				</div>
+				<img id="diffImg" src="" alt="" class="img-rounded">
+			</div>
+			<div class="point">
+				<div class="form-group">
+					<label for="exampleInputEmail1">目标地址</label>
+					<input type="text" class="form-control" id="exampleInputEmail1" placeholder="Example: www.douban.com" name="captureUrl">
+				</div>
+				<div class="form-group">
+					<label for="exampleInputPassword1">选择器</label>
+					<input type="text" class="form-control" id="exampleInputPassword1" placeholder="Example: #anony-sns .point" name="selector">
+				</div>
+			</div>
+		</form>
+		<button id="submitBtn" type="submit" class="btn btn-default">提交</button>
+	</div>
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script>
+		$(document).ready(function() {
+			var inputFile = $('#exampleInputFile'),
+				submitBtn = $('#submitBtn'),
+				form
+			inputFile.on('change', inputFileChange)
+			submitBtn.on('click', ajaxForm)
+			function ajaxForm() {
+				form = new FormData(document.getElementById("form"))
+				console.log(form)
+				$.ajax({
+	                url:"/api",
+	                type:"post",
+	                port: 3033,
+	                data:form,
+	                processData:false,
+	                contentType:false,
+	                success:function(data){
+	                    console.log("over..")
+	                },
+	                error:function(e){
+	                	console.log('e', e)
+	                }
+	            })
+			}
+            function inputFileChange() {
+            	var file = document.querySelector('#exampleInputFile')
+				var oFReader = new FileReader()
+		        var rFilter = /^(?:image\/bmp|image\/cis\-cod|image\/gif|image\/ief|image\/jpeg|image\/jpeg|image\/jpeg|image\/pipeg|image\/png|image\/svg\+xml|image\/tiff|image\/x\-cmu\-raster|image\/x\-cmx|image\/x\-icon|image\/x\-portable\-anymap|image\/x\-portable\-bitmap|image\/x\-portable\-graymap|image\/x\-portable\-pixmap|image\/x\-rgb|image\/x\-xbitmap|image\/x\-xpixmap|image\/x\-xwindowdump)$/i;
+		        if(file.files.length === 0) {
+		            return null
+		        } else {
+		            if (!rFilter.test(file.files[0].type)) { 
+		                alert("You must select a valid image file!") 
+		                return null 
+		            }
+		            oFReader.readAsDataURL(file.files[0])
+		        }
+		        oFReader.onload = function (oFREvent) {
+		            $('#diffImg').attr('src', oFREvent.target.result)
+        		}
+            }
+		})
+	</script>
+	
+</body>
+</html>
