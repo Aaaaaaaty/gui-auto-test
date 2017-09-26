@@ -9,6 +9,7 @@ const casper = require('casper').create({
 const fileName = decodeURIComponent(system.args[4])
 const url = decodeURIComponent(system.args[5])
 const selector = decodeURIComponent(system.args[6])
+const id = decodeURIComponent(system.args[7])
 casper.start(url)
 casper.then(function() {
     this.wait(3000, function() {
@@ -18,11 +19,10 @@ casper.then(function() {
 })
 casper.then(function() {
 	casper.start('http://10.2.45.110:3033/form.html', function() {
-		console.log('填写表单')
-        console.log(this.fill)
 		this.fill('form#contact-form', {
 		    'diff': './images/captureTest3.png',
 		    'point': './images/' + fileName,
+            'id': id
 		}, true)
 	})
 })

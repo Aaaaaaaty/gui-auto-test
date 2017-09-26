@@ -27,19 +27,19 @@ const MIME_TYPE = {
     "wmv": "video/x-ms-wmv",
     "xml": "text/xml"
 }
-let resend
+let resObj = {}
 let server = http.createServer((req, res) => {
     serverStatic(req, res)
-
 }).listen(3033)
-function resWriteData() {
 
-}
 function serverStatic(req, res) {
     let filePath
     if(~req.url.indexOf('api')){
-        resend = res
-        resolveData(req, res)
+        let ip = req.socket.remoteAddress.slice(7),
+            nowTime = new Date().getTime(),
+            id = ip + nowTime
+        resObj[id] = res
+        resolveData(req, res, id)
     } else if(~req.url.indexOf('upload')){
         getResult(req, res)
     } else {
@@ -67,7 +67,7 @@ function sendFile(filePath, res) {
         }
     })//path.exists
 }
-function resolveData(req, res) {
+function resolveData(req, res, id) {
     console.log('开始处理数据')
     let form = new multiparty.Form()
     form.parse(req, function (err, fields, files) {
@@ -76,7 +76,7 @@ function resolveData(req, res) {
             captureUrl = fields['captureUrl'],
             selector = fields['selector']
         fs.createReadStream(files['file'][0].path).pipe(fs.createWriteStream(targetPath))
-        let casperjs = spawn('casperjs', ['casper.js', filename, captureUrl, selector])
+        let casperjs = spawn('casperjs', ['casper.js', filename, captureUrl, selector, id])
         casperjs.stdout.on('data', (data) => {
             console.log(`数据日志：${data}`)
         })    
@@ -102,7 +102,7 @@ function getResult(req, res) { //将抓取结果填写进表单并提交
 }
 
 function diffpx(diffObj, res) { //像素对比
-    let {diff, point} = diffObj
+    let {diff, point, id} = diffObj
     resemble.outputSettings({
         errorColor: {
             red: 255,
@@ -119,9 +119,11 @@ function diffpx(diffObj, res) { //像素对比
         imgObj = {
             url: 'http://10.2.45.110:3033/images/' + imgName,
         }
-        resend.writeHead(200, {'Content-type':'application/json'})
-        resend.write(JSON.stringify(imgObj))
-        resend.end()
+        let resEnd = resObj[id]
+        console.log('id', id)
+        resEnd.writeHead(200, {'Content-type':'application/json'})
+        resEnd.write(JSON.stringify(imgObj))
+        resEnd.end()
     })
 }
 
