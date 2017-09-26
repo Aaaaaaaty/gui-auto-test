@@ -81,7 +81,6 @@ function resolveData(req, res, id) {
             console.log(`数据日志：${data}`)
         })    
     })
-
 }
 
 
@@ -109,7 +108,7 @@ function diffpx(diffObj, res) { //像素对比
             green: 0,
             blue: 0
         },
-        errorType: 'movement',
+        errorType: 'movement'
     })
     let result = resemble(diff).compareTo(point).ignoreColors().onComplete((data) => {
         console.log('对比结果完成')
@@ -120,10 +119,8 @@ function diffpx(diffObj, res) { //像素对比
             url: 'http://10.2.45.110:3033/images/' + imgName,
         }
         let resEnd = resObj[id]
-        console.log('id', id)
         resEnd.writeHead(200, {'Content-type':'application/json'})
-        resEnd.write(JSON.stringify(imgObj))
-        resEnd.end()
+        resEnd.end(JSON.stringify(imgObj))
     })
 }
 

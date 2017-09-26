@@ -11,7 +11,7 @@
 			margin: 0 auto;
 		}
 		#diffImg {
-			width: 400px;
+			width: 800px;
 			margin: 0 auto;
 		}
 		#resultImg {
@@ -67,7 +67,7 @@
 	                contentType:false,
 	                success:function(data){
 	                    var url = data['url']
-	                    resultImg.attr('src', url)
+	                    resultImg.attr('src', url).css({'margin-top': '30px'})
 	                },
 	                error:function(e){
 	                	console.log('e', e)
