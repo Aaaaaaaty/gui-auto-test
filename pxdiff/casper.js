@@ -17,11 +17,12 @@ casper.then(function() {
     })
 })
 casper.then(function() {
-	casper.start('http://10.2.44.66:3033/form.html', function() {
+	casper.start('http://10.2.45.110:3033/form.html', function() {
 		console.log('填写表单')
+        console.log(this.fill)
 		this.fill('form#contact-form', {
 		    'diff': './images/captureTest3.png',
-		    'point': './images/fileName',
+		    'point': './images/' + fileName,
 		}, true)
 	})
 })

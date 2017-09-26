@@ -1,19 +1,19 @@
 const http = require('http')
-const fs=require('fs')
-const url=require('url')
-const path=require('path')
+const fs = require('fs')
+const url = require('url')
+const path = require('path')
 const resemble = require('resemblejs')
 const { spawn } = require('child_process')
 const querystring = require('querystring')
 const multiparty = require('multiparty')
 
-let MIME_TYPE = {
+const MIME_TYPE = {
     "css": "text/css",
     "gif": "image/gif",
     "html": "text/html",
     "ico": "image/x-icon",
     "jpeg": "image/jpeg",
-    "jpg": "image/jpeg",
+    "jpg": "image/jpg",
     "js": "text/javascript",
     "json": "application/json",
     "pdf": "application/pdf",
@@ -27,37 +27,45 @@ let MIME_TYPE = {
     "wmv": "video/x-ms-wmv",
     "xml": "text/xml"
 }
-
+let resend
 let server = http.createServer((req, res) => {
     serverStatic(req, res)
-}).listen(3033)
 
+}).listen(3033)
+function resWriteData() {
+
+}
 function serverStatic(req, res) {
     let filePath
     if(~req.url.indexOf('api')){
+        resend = res
         resolveData(req, res)
     } else if(~req.url.indexOf('upload')){
         getResult(req, res)
-    } else{
-        filePath = "./" + url.parse(req.url).pathname;
-        fs.open(filePath, 'r+', function(err){
-            if(err){
-                send404(res);
-            }else{
-                let ext = path.extname(filePath);
-                ext = ext ? ext.slice(1) : 'unknown';
-                let contentType = MIME_TYPE[ext] || "text/plain";
-                fs.readFile(filePath,function(err,data){
-                    if(err){
-                        send500(res)
-                    }else{
-                        res.writeHead(200,{'content-type':contentType});
-                        res.end(data.toString());
-                    }
-                });//fs.readfile
-            }
-        })//path.exists
+    } else {
+        filePath = "." + url.parse(req.url).pathname
+        sendFile(filePath, res)
     }
+}
+
+function sendFile(filePath, res) {
+    fs.open(filePath, 'r+', function(err){
+        if(err){
+            send404(res)
+        }else{
+            let ext = path.extname(filePath)
+            ext = ext ? ext.slice(1) : 'unknown'
+            let contentType = MIME_TYPE[ext] || "text/plain"
+            fs.readFile(filePath,function(err,data){
+                if(err){
+                    send500(res)
+                }else{
+                    res.writeHead(200,{'content-type':contentType})
+                    res.end(data)
+                }
+            })//fs.readfile
+        }
+    })//path.exists
 }
 function resolveData(req, res) {
     console.log('开始处理数据')
@@ -71,13 +79,13 @@ function resolveData(req, res) {
         let casperjs = spawn('casperjs', ['casper.js', filename, captureUrl, selector])
         casperjs.stdout.on('data', (data) => {
             console.log(`数据日志：${data}`)
-        });    
-    });
+        })    
+    })
 
 }
 
 
-function getResult(req, res) { //获得表单结果
+function getResult(req, res) { //将抓取结果填写进表单并提交
     let body = ''
     req.on('data', (chunk) => {
         body += chunk
@@ -88,11 +96,12 @@ function getResult(req, res) { //获得表单结果
         data.split('&').forEach((item) => {
             diffObj[item.split('=')[0]] = item.split('=')[1]
         })
-        diffpx(diffObj)
+        console.log('diffObj', diffObj)
+        diffpx(diffObj, res)
     })
 }
 
-function diffpx(diffObj) { //像素对比
+function diffpx(diffObj, res) { //像素对比
     let {diff, point} = diffObj
     resemble.outputSettings({
         errorColor: {
@@ -104,13 +113,21 @@ function diffpx(diffObj) { //像素对比
     })
     let result = resemble(diff).compareTo(point).ignoreColors().onComplete((data) => {
         console.log('对比结果完成')
-        fs.writeFileSync('./images/output.png', data.getBuffer());
+        let imgName = 'diff'+ new Date().getTime() +'.png',
+            imgUrl
+        fs.writeFileSync('./images/' + imgName, data.getBuffer())
+        imgObj = {
+            url: 'http://10.2.45.110:3033/images/' + imgName,
+        }
+        resend.writeHead(200, {'Content-type':'application/json'})
+        resend.write(JSON.stringify(imgObj))
+        resend.end()
     })
 }
 
 
 function send404(res){
-    res.end("<h1 style='text-align:center;'>404</h1><p style='text-align:center;'>file not found</p>")
+    res.end("<h1 style='text-align:center'>404</h1><p style='text-align:center'>file not found</p>")
 }
 function send500(res){
     res.end("<h1>500</h1>服务器内部错误！")

@@ -15,5 +15,8 @@
     "phantomcss": "^1.1.5",
     "phantomjs": "^2.1.7+deprecated",
     "resemblejs": "^2.2.6"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.18.13"
   }
 }
