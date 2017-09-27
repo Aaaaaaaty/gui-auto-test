@@ -39,6 +39,8 @@ function serverStatic(req, res) {
             nowTime = new Date().getTime(),
             id = ip + nowTime
         resObj[id] = res
+        console.log('用户ip：' + ip)
+        console.log(`------------------------------------------`)
         resolveData(req, res, id)
     } else if(~req.url.indexOf('upload')){
         getResult(req, res)
@@ -69,17 +71,30 @@ function sendFile(filePath, res) {
 }
 function resolveData(req, res, id) {
     console.log('开始处理数据')
+     console.log(`------------------------------------------`)
     let form = new multiparty.Form()
     form.parse(req, function (err, fields, files) {
         let filename = files['file'][0].originalFilename,
             targetPath = __dirname + '/images/' + filename,
             captureUrl = fields['captureUrl'],
             selector = fields['selector']
-        fs.createReadStream(files['file'][0].path).pipe(fs.createWriteStream(targetPath))
-        let casperjs = spawn('casperjs', ['casper.js', filename, captureUrl, selector, id])
-        casperjs.stdout.on('data', (data) => {
-            console.log(`数据日志：${data}`)
-        })    
+        if(filename && captureUrl && selector) {
+            fs.createReadStream(files['file'][0].path).pipe(fs.createWriteStream(targetPath))
+            let casperjs = spawn('casperjs', ['casper.js', filename, captureUrl, selector, id])
+            casperjs.stdout.on('data', (data) => {
+                data = data.toString().replace(/[\r\n]/g, "")
+                console.log(`数据日志：${data}`)
+                 console.log(`------------------------------------------`)
+            }) 
+        } else {
+            let errData = {
+                status: 400,
+                msg: 'wrong params'
+            }
+            resObj[id].writeHead(400, {'Content-type':'application/json'})
+            resObj[id].end(JSON.stringify(errData))
+        }
+          
     })
 }
 
@@ -95,7 +110,6 @@ function getResult(req, res) { //将抓取结果填写进表单并提交
         data.split('&').forEach((item) => {
             diffObj[item.split('=')[0]] = item.split('=')[1]
         })
-        console.log('diffObj', diffObj)
         diffpx(diffObj, res)
     })
 }
@@ -110,19 +124,26 @@ function diffpx(diffObj, res) { //像素对比
         },
         errorType: 'movement'
     })
-    let result = resemble(diff).compareTo(point).ignoreColors().onComplete((data) => {
-        console.log('对比结果完成')
-        console.log(data)
+    function complete(data) {
         let imgName = 'diff'+ new Date().getTime() +'.png',
-            imgUrl
-        fs.writeFileSync('./images/' + imgName, data.getBuffer())
+            imgUrl,
+            analysisTime = data.analysisTime,
+            misMatchPercentage = data.misMatchPercentage,
+            resultUrl = './images/' + imgName
+        console.log('对比结果完成: 像素差：' + misMatchPercentage + '%；耗时：'+ analysisTime +'ms；\n')
+        fs.writeFileSync(resultUrl, data.getBuffer())
         imgObj = {
-            url: host + '/images/' + imgName,
+            status: 200,
+            diffUrl: host + '/images/' + imgName,
+            pointUrl: host + diff.slice(1),
+            analysisTime: analysisTime,
+            misMatchPercentage: misMatchPercentage
         }
         let resEnd = resObj[id]
         resEnd.writeHead(200, {'Content-type':'application/json'})
         resEnd.end(JSON.stringify(imgObj))
-    })
+    }
+    let result = resemble(diff).compareTo(point).ignoreColors().onComplete(complete)
 }
 
 
