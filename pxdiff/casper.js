@@ -7,7 +7,6 @@ const casper = require('casper').create({
         height: 4080
     }
 })
-console.log(1)
 const fileName = decodeURIComponent(system.args[4])
 const url = decodeURIComponent(system.args[5])
 const selector = decodeURIComponent(system.args[6])
