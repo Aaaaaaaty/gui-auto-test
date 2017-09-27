@@ -6,7 +6,7 @@ const resemble = require('resemblejs')
 const { spawn } = require('child_process')
 const querystring = require('querystring')
 const multiparty = require('multiparty')
-
+const { host } = require('./host.js')
 const MIME_TYPE = {
     "css": "text/css",
     "gif": "image/gif",
@@ -116,7 +116,7 @@ function diffpx(diffObj, res) { //像素对比
             imgUrl
         fs.writeFileSync('./images/' + imgName, data.getBuffer())
         imgObj = {
-            url: 'http://10.2.45.110:3033/images/' + imgName,
+            url: host + '/images/' + imgName,
         }
         let resEnd = resObj[id]
         resEnd.writeHead(200, {'Content-type':'application/json'})

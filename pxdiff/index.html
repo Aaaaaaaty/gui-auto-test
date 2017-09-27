@@ -23,6 +23,9 @@
 </head>
 <body>
 	<div class="wrapper">
+		<div class="page-header">
+		    <h3>PxDiff</h3>
+		</div>
 		<form id="form">
 			<div class="diff">
 				<div class="form-group">
@@ -34,7 +37,7 @@
 			<div class="point">
 				<div class="form-group">
 					<label for="exampleInputEmail1">目标地址</label>
-					<input type="text" class="form-control" id="exampleInputEmail1" placeholder="Example: www.douban.com" name="captureUrl">
+					<input type="text" class="form-control" id="exampleInputEmail1" placeholder="Example: https://www.douban.com" name="captureUrl">
 				</div>
 				<div class="form-group">
 					<label for="exampleInputPassword1">选择器</label>
@@ -82,7 +85,7 @@
 		            return null
 		        } else {
 		            if (!rFilter.test(file.files[0].type)) { 
-		                alert("You must select a valid image file!") 
+		                alert("你必须选择图片类型文件！") 
 		                return null 
 		            }
 		            oFReader.readAsDataURL(file.files[0])
