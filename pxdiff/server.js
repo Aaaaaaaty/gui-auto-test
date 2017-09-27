@@ -112,6 +112,7 @@ function diffpx(diffObj, res) { //像素对比
     })
     let result = resemble(diff).compareTo(point).ignoreColors().onComplete((data) => {
         console.log('对比结果完成')
+        console.log(data)
         let imgName = 'diff'+ new Date().getTime() +'.png',
             imgUrl
         fs.writeFileSync('./images/' + imgName, data.getBuffer())
