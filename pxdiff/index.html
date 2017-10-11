@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title>像素对比工具</title>
 	<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="http://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.css">
 	<style>
 		.wrapper {
 			width: 800px;
@@ -21,15 +21,15 @@
 		}
 		.progress {
 			display: none;
-			position: absolute;
+			position: fixed;
 			width: 300px;
 			left: 50%;
 			margin-left: -150px;
-			top: 30%;
+			top: 300px;
 			z-index: 100;
 		}
 		.progressBg {
-			position: absolute;
+			position: fixed;
 			display: none;
 			top: 0;
 			left: 0;
@@ -43,6 +43,7 @@
 			margin: 35% auto;
 		    text-align: center;
 		    font-size: 30px;
+		    margin-top: 350px;
 		}
 		#url:invalid {
 			border-color: red;

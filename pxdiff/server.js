@@ -52,6 +52,7 @@ function serverStatic(req, res) {
 
 function sendFile(filePath, res) {
     fs.open(filePath, 'r+', function(err){
+        console.log(err)
         if(err){
             send404(res)
         }else{
@@ -65,13 +66,13 @@ function sendFile(filePath, res) {
                     res.writeHead(200,{'content-type':contentType})
                     res.end(data)
                 }
-            })//fs.readfile
+            })
         }
-    })//path.exists
+    })
 }
 function resolveData(req, res, id) {
     console.log('开始处理数据')
-     console.log(`------------------------------------------`)
+    console.log(`------------------------------------------`)
     let form = new multiparty.Form()
     form.parse(req, function (err, fields, files) {
         let filename = files['file'][0].originalFilename,

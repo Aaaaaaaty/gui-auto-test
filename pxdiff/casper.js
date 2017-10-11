@@ -14,10 +14,8 @@ const id = decodeURIComponent(system.args[7])
 const time = new Date().getTime()
 casper.start(url)
 casper.then(function() {
-    // this.wait(3000, function() {
     	console.log('正在截图请稍后')
         this.captureSelector('./images/casper'+ id + time +'.png', selector)
-    // })
 })
 casper.then(function() {
 	casper.start(host + '/form.html', function() {
