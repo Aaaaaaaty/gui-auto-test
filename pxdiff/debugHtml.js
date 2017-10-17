@@ -1,3 +1,4 @@
+
 const casper = require('casper').create({
     // 浏览器窗口大小
     viewportSize: {
@@ -5,17 +6,16 @@ const casper = require('casper').create({
         height: 4080
     },
     onResourceReceived: function(casper, data) {
-    	// if(data['status']!== 200) {
-    		// console.log('请求地址：' + data['url'])
-    		// console.log('状态码' + data['status'])
-    		console.log(JSON.stringify(data))
-    	// }
-    	
+        var status = data['status'].toString()
+    	if(status.match(/[4|5]\d{2}/)) {
+    		console.log('请求地址：' + data['url'])
+    		console.log('状态码' + data['status'])
+            console.log('--------------------------------------')
+    	}    	
     }
 })
-casper.start('http://10.2.45.110:3000/html5player/', function() {
-    // this.debugPage();
+casper.start('http://www.163.com/', function() {
+    console.log(123)
 });
 
 casper.run();
-
